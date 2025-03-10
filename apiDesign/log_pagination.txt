@@ -1,0 +1,31 @@
+restapi for list of logs
+
+GET /api/log/{log_id}
+description: add single log by id
+headers:
+- authorization: Bearer <token>
+
+response:
+{
+	"id": 123,
+	"message": "system crashed",
+	"level": "error", 
+	"timestamp": "2025-03.."
+}
+
+
+GET /api/log/pagination
+desc: pagination of logs
+header: auth
+
+POST /api/log/add
+desc: add new log
+header: auth
+body:
+- log info
+`
+PUT /api/log/update/logid
+desc: update log
+header: auth
+body: 
+- new log info
