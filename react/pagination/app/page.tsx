@@ -12,7 +12,8 @@ export default function Home() {
   const [searchInput, setSearchInput] = useState("")
   const [limit, setLimit] = useState(10)
 
-  let numPages = Math.floor(100 / limit)
+  let numPages = Math.ceil(100 / limit)
+  console.log("numPages: ", numPages)
   
   useEffect(() => {
     async function fetchLogs() {
@@ -36,7 +37,7 @@ export default function Home() {
     fetchLogs()
   }, [page, limit]); // Dependency array, effect runs when 'page' variable changes
 
-  const fileredLogs = logs.filter((log) =>
+  const filteredLogsLogs = logs.filter((log) =>
     log.title.toLowerCase().includes(searchInput.toLowerCase())
   )
 
@@ -47,7 +48,7 @@ export default function Home() {
         {/* Search bar */}
         <input
           type="text"
-          className="px-4 py-2 border"
+          className="px-4 py-2 border mb-2 mt-4"
           placeholder="Search logs..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
@@ -66,7 +67,7 @@ export default function Home() {
         </select>
       </div>
       <ul className="px-1 py-1">
-        {fileredLogs.map((log) => (
+        {filteredLogsLogs.map((log) => (
           <li key={log.id} className="px-2 py-2">
             {log.title}
           </li>
@@ -84,7 +85,7 @@ export default function Home() {
         {/* Next button */}
         <button
           className="px-4 py-2 border bg-green-700 disabled:bg-gray-700"
-          disabled={page >= numPages}
+          disabled={page > numPages}
           onClick={() => setPage(page + 1)}
         >
           Next
