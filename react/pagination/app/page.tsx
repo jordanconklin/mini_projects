@@ -1,5 +1,5 @@
 "use client";
-import {useEffect, useState} from "react";
+import {useEffect, useState, useMemo} from "react";
 
 interface Log {
   id: number;
@@ -11,14 +11,17 @@ export default function Home() {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("")
   const [limit, setLimit] = useState(10)
+  const [loading, setLoading] = useState(false)
 
-  let numPages = Math.ceil(100 / limit)
+  // useMemo to only perform math when limit changes
+  let numPages = useMemo(() => Math.ceil(100 / limit), [limit])
   console.log("numPages: ", numPages)
   
   useEffect(() => {
     async function fetchLogs() {
+      setLoading(true);
       try {
-        console.log("Obtaining log data...")
+        console.log("Fetching log data...")
         const response = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${limit}`);
       
         if (!response.ok) {
@@ -32,14 +35,17 @@ export default function Home() {
       } catch(error) {
         console.error("An error occurred: ", error)
       }
+      setLoading(false);
     };
 
     fetchLogs()
   }, [page, limit]); // Dependency array, effect runs when 'page' variable changes
 
-  const filteredLogsLogs = logs.filter((log) =>
-    log.title.toLowerCase().includes(searchInput.toLowerCase())
-  )
+  const filteredLogsLogs = useMemo(() => {
+    return logs.filter((log) =>
+      log.title.toLowerCase().includes(searchInput.toLowerCase())
+    );
+  }, [logs, searchInput])
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-black">
@@ -66,6 +72,7 @@ export default function Home() {
           ))}
         </select>
       </div>
+      {/* Logs filtered based on user search input */}
       <ul className="px-1 py-1">
         {filteredLogsLogs.map((log) => (
           <li key={log.id} className="px-2 py-2">
